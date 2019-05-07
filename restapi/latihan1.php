@@ -2,8 +2,7 @@
   $data = file_get_contents('data/pizza.json');
   $menu = json_decode($data,true);
 
-  $menu = $menu["menu"];
-
+  $menu = $menu["menu"]; 
 ?>
 
 <!doctype html>
@@ -19,7 +18,6 @@
     <title>Hello, world!</title>
   </head>
   <body>
-
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="">
