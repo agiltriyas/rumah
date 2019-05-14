@@ -12,7 +12,7 @@ class Auth extends CI_Controller
     public function index()
     {
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
-        $this->form_validation->set_rules('password', 'password', 'required|trim');
+        $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
         if ($this->form_validation->run() == false) {
 
@@ -26,7 +26,27 @@ class Auth extends CI_Controller
     }
 
     private function _login()
-    { }
+    {
+        $email = $this->input->post('email');
+        $pass = $this->input->post('password');
+
+        $result = $this->db->get_where('user', ['email' => $email])->result_array();
+        $dresult = $result[0];
+
+        //cek email dan password
+        if ($email == $dresult['email'] && password_verify($pass, $dresult['password'])) {
+            # code...
+            $data = [
+                "email" => $dresult['email'],
+                'role_id' => $dresult['role_id']
+            ];
+            $this->session->set_userdata('email', $data);
+            redirect('user');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Email or Password Invalid.</div>');
+            redirect('auth');
+        }
+    }
 
     public function register()
     {
@@ -51,7 +71,7 @@ class Auth extends CI_Controller
                 'email' => htmlspecialchars($this->input->post('email', true)),
                 'image' => 'default.jpg',
                 'password' => password_hash(
-                    $this->input->post('password1'),
+                    $this->input->post('password2'),
                     PASSWORD_DEFAULT
                 ),
                 'role_id' => 2,
@@ -64,5 +84,11 @@ class Auth extends CI_Controller
             Your Account has been Created.</div>');
             redirect('auth');
         }
+    }
+
+    public function logout()
+    {
+        $this->session->unset_userdata('email');
+        redirect('auth');
     }
 }
