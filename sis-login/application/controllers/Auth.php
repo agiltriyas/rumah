@@ -30,18 +30,21 @@ class Auth extends CI_Controller
         $email = $this->input->post('email');
         $pass = $this->input->post('password');
 
-        $result = $this->db->get_where('user', ['email' => $email])->result_array();
-        $dresult = $result[0];
+        $result = $this->db->get_where('user', ['email' => $email])->row_array();
 
         //cek email dan password
-        if ($email == $dresult['email'] && password_verify($pass, $dresult['password'])) {
+        if ($email == $result['email'] && password_verify($pass, $result['password'])) {
             # code...
             $data = [
-                "email" => $dresult['email'],
-                'role_id' => $dresult['role_id']
+                "email" => $result['email'],
+                'role_id' => $result['role_id']
             ];
-            $this->session->set_userdata('email', $data);
-            redirect('user');
+            $this->session->set_userdata($data);
+            if ($result['role_id'] == 1) {
+                redirect('admin');
+            } else {
+                redirect('user');
+            }
         } else {
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Email or Password Invalid.</div>');
             redirect('auth');
@@ -89,6 +92,9 @@ class Auth extends CI_Controller
     public function logout()
     {
         $this->session->unset_userdata('email');
+        $this->session->unset_userdata('role_id');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+        Your Account has been Logged Out.</div>');
         redirect('auth');
     }
 }
