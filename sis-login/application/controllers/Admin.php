@@ -8,8 +8,11 @@ class Admin extends CI_Controller
     {
         parent::__construct();
         $this->load->library('form_validation');
-    }
 
+        if ($this->session->userdata('role_id') != 1) {
+            redirect('user');
+        }
+    }
     public function index()
     {
         if ($this->session->has_userdata('email')) {

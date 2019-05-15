@@ -13,19 +13,22 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
-        Home
-    </div>
 
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item">
-        <a class="nav-link" href="index.html">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
-    </li>
+    <?php
+    if ($this->session->userdata('role_id') == 1) : ?>
+        <div class="sidebar-heading">
+            Home
+        </div>
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href="<?= base_url('admin') ?>">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Dashboard</span></a>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+    <?php endif; ?>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
 
     <!-- Heading -->
     <div class="sidebar-heading">
@@ -40,9 +43,9 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="buttons.html">My Profile</a>
-                <a class="collapse-item" href="cards.html">Edit Profile</a>
-                <a class="collapse-item" href="cards.html">Change Password</a>
+                <a class="collapse-item" href="<?= base_url('user') ?>">My Profile</a>
+                <a class="collapse-item" href="<?= base_url('user/editprofile') ?>">Edit Profile</a>
+                <a class="collapse-item" href="#">Change Password</a>
             </div>
         </div>
     </li>
