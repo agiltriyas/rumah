@@ -12,43 +12,38 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
-    <!-- Heading -->
-
     <?php
-    if ($this->session->userdata('role_id') == 1) : ?>
+    $roleId = $this->session->userdata('role_id');
+    $query = "SELECT `menu`,`user_menu`.`id`
+                FROM `user_access_menu` JOIN `user_menu` 
+                  ON `user_access_menu`.`menu_id` = `user_menu`.`id`
+               WHERE `role_id` = $roleId;
+        ";
+    $menu = $this->db->query($query)->result_array();
+    // var_dump($menu);
+    // die;
+    ?>
+
+    <?php foreach ($menu as $m) : ?>
         <div class="sidebar-heading">
-            Home
+            <?= $m['menu']; ?>
         </div>
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item">
-            <a class="nav-link" href="<?= base_url('admin') ?>">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span></a>
-        </li>
+        <?php
+        $menuId = $m['id'];
+        $querySub = "SELECT * FROM `user_sub_menu` WHERE `menu_id`=$menuId AND `is_active` = 1";
+        $subMenu = $this->db->query($querySub)->result_array();
+        ?>
+        <?php foreach ($subMenu as $sm) : ?>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="<?= base_url($sm['url']) ?>">
+                    <i class="<?= $sm['icon']; ?>"></i>
+                    <span><?= $sm['title']; ?></span></a>
+            </li>
+        <?php endforeach; ?>
         <!-- Divider -->
         <hr class="sidebar-divider">
-    <?php endif; ?>
-
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Interface
-    </div>
-
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Profile</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="<?= base_url('user') ?>">My Profile</a>
-                <a class="collapse-item" href="<?= base_url('user/editprofile') ?>">Edit Profile</a>
-                <a class="collapse-item" href="#">Change Password</a>
-            </div>
-        </div>
-    </li>
+    <?php endforeach; ?>
 
 
     <!-- Nav Item - Tables -->
