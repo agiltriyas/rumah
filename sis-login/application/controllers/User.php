@@ -15,11 +15,28 @@ class User extends CI_Controller
         if ($this->session->has_userdata('email')) {
             $sesdata = $this->session->userdata('email');
             $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
-            $data['title'] = "Profile";
+            $data['title'] = "My Profile";
             $this->load->view('template/user_header', $data);
             $this->load->view('template/user_sidebar');
             $this->load->view('template/user_top');
             $this->load->view('user/index', $data);
+            $this->load->view('template/user_footer');
+            # code...
+        } else {
+            redirect('auth');
+        }
+    }
+
+    public function edit()
+    {
+        if ($this->session->has_userdata('email')) {
+            $sesdata = $this->session->userdata('email');
+            $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
+            $data['title'] = "My Profile";
+            $this->load->view('template/user_header', $data);
+            $this->load->view('template/user_sidebar');
+            $this->load->view('template/user_top');
+            $this->load->view('user/edit', $data);
             $this->load->view('template/user_footer');
             # code...
         } else {

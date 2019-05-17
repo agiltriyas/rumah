@@ -35,7 +35,12 @@
         ?>
         <?php foreach ($subMenu as $sm) : ?>
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
+            <?php if ($sm['title'] == $title) { ?>
+                <li class='nav-item active'>
+                <?php } else { ?>
+                <li class="nav-item">
+                <?php } ?>
+
                 <a class="nav-link" href="<?= base_url($sm['url']) ?>">
                     <i class="<?= $sm['icon']; ?>"></i>
                     <span><?= $sm['title']; ?></span></a>
