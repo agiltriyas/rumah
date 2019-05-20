@@ -32,13 +32,14 @@
         $menuId = $m['id'];
         $querySub = "SELECT * FROM `user_sub_menu` WHERE `menu_id`=$menuId AND `is_active` = 1";
         $subMenu = $this->db->query($querySub)->result_array();
+
         ?>
         <?php foreach ($subMenu as $sm) : ?>
             <!-- Nav Item - Dashboard -->
             <?php if ($sm['title'] == $title) { ?>
-                <li class='nav-item active'>
+                <li class='nav-item active' style="margin-bottom:-15px;">
                 <?php } else { ?>
-                <li class="nav-item">
+                <li class="nav-item" style="margin-bottom:-15px;">
                 <?php } ?>
 
                 <a class="nav-link" href="<?= base_url($sm['url']) ?>">
@@ -47,7 +48,7 @@
             </li>
         <?php endforeach; ?>
         <!-- Divider -->
-        <hr class="sidebar-divider">
+        <hr class="sidebar-divider mt-1">
     <?php endforeach; ?>
 
 

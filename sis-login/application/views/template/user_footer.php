@@ -51,6 +51,77 @@
 <!-- Custom scripts for all pages-->
 <script src="<?= base_url('asets') ?>/js/sb-admin-2.min.js"></script>
 
+<script>
+    $(document).ready(function() {
+        $('#addMenu').on('click', function() {
+            $('#menu').val('');
+            $('.form-group #id').hide();
+        })
+
+        $('.emenu').on('click', function() {
+            $('.modal-header h5').html('Edit Menu');
+            $('.modal-footer button').html('Save Changes');
+            $('.modal-body form').attr('action', 'http://localhost/belajar1/sis-login/tools/editMenu');
+            $('.form-group #id').hide();
+
+            const id = $(this).data('id');
+            $.ajax({
+                url: 'http://localhost/belajar1/sis-login/Tools/getMenu',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                method: 'post',
+                success: function(data) {
+                    const namaMenu = data['menu'];
+                    const idMenu = data['id'];
+                    $('#menu').val(namaMenu);
+                    $('#id').val(idMenu);
+                }
+            })
+        });
+
+        $('#addSubMenu').on('click', function() {
+            $('#menuId option').html('');
+            $('#subTitle').val('');
+            $('#subIcon').val('');
+            $('#subUrl').val('');
+            $('#id').hide();
+
+        })
+
+        $('.esubmenu').on('click', function() {
+            $('#id').hide();
+            $('.modal-title').html('Edit Sub Menu');
+            $('.modal-footer button').html('Save Changes');
+            $('.modal-body form').attr('action', 'http://localhost/belajar1/sis-login/tools/editSubMenu');
+
+            const id = $(this).data('id');
+
+            $.ajax({
+                url: 'http://localhost/belajar1/sis-login/tools/getSubMenu',
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                method: 'post',
+                success: function(data) {
+                    $('#id').val(data['id']);
+                    $('#menuId option').val(data['menu_id']);
+                    $('#menuId option').html(data['menu']);
+                    $('#subTitle').val(data['title']);
+                    $('#subIcon').val(data['icon']);
+                    $('#subUrl').val(data['url']);
+                }
+
+            })
+        })
+
+        $('#addAccMenu').on('click', function() {
+            $('#id').hide();
+        })
+    });
+</script>
 </body>
 
 </html>
