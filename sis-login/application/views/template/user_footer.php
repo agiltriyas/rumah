@@ -121,6 +121,29 @@
         $('#addAccMenu').on('click', function() {
             $('#id').hide();
         })
+
+        $('.cekAccess').on('click', function() {
+
+            const role = $(this).data('role');
+            const menu = $(this).data('menu');
+
+            // console.log(role);
+            // console.log(menu);
+
+            $.ajax({
+                url: '<?= base_url("admin/setMenu") ?>',
+                method: 'post',
+                data: {
+                    role: role,
+                    menu: menu
+                },
+                success: function() {
+                    window.location.href = '<?= base_url("admin/accessMenu/") ?>' + role;
+                }
+            });
+
+
+        })
     });
 </script>
 </body>

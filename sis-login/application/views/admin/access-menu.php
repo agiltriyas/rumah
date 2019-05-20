@@ -15,8 +15,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                    $this->db->where('id !=',1);
+                    <?php
+                    $this->db->where('id !=', 1);
                     $result = $this->db->get('user_menu')->result_array();
                     $i = 1; ?>
                     <?php foreach ($result as $m) : ?>
@@ -25,20 +25,18 @@
                             <td><?= $m['menu']; ?></td>
                             <td>
                                 <div class="form-check">
-                                <?php 
-                                $result2 = $this->db->get_where('user_access_menu',[
-                                    'role_id' => $role['id'],
-                                    'menu_id' => $m['id'],
-                                ]); 
-                                    // var_dump($result2->num_rows());
-                                    // die;
-                                ?>
-                                <?php if($result2->num_rows() == 1): ?>
-                                <input class="form-check-input" type="checkbox" id="cekAccess" checked="checked">
-                                <?php else: ?>
-                                <input class="form-check-input" type="checkbox" id="cekAccess">
-                                <?php endif; ?>
-                                </div>                               
+                                    <?php
+                                    $result2 = $this->db->get_where('user_access_menu', [
+                                        'role_id' => $role['id'],
+                                        'menu_id' => $m['id'],
+                                    ]);
+                                    ?>
+                                    <?php if ($result2->num_rows() == 1) : ?>
+                                        <input class="form-check-input cekAccess" type="checkbox" id="cekAccess" checked="checked" data-role="<?= $role['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                    <?php else : ?>
+                                        <input class="form-check-input cekAccess" type="checkbox" id="cekAccess" data-role="<?= $role['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                         <?php $i++; ?>
