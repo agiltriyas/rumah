@@ -168,30 +168,4 @@ class Tools extends CI_Controller
             redirect('Tools/subMenu');
         } else { }
     }
-
-    public function accessMenu()
-    {
-        $sesdata = $this->session->userdata('email');
-        $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
-        $data['title'] = "Access Menu";
-        $this->load->view('template/user_header', $data);
-        $this->load->view('template/user_sidebar', $data);
-        $this->load->view('template/user_top');
-        $this->load->view('tools/accessmenu');
-        $this->load->view('template/user_footer');
-
-        $menuId = (int)$this->input->post('menuId');
-        $roleId = (int)$this->input->post('roleId');
-
-
-        $data = [
-            'menu_id' => $menuId,
-            'role_id' => $roleId
-        ];
-
-        $this->db->insert('user_access_menu', $data);
-        $this->session->set_flashdata('message', '<div class="alert alert-success col-lg-6" role="alert">
-        Sub Menu Updated.</div>');
-        redirect('Tools/subMenu');
-    }
 }

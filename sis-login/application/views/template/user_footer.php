@@ -61,12 +61,12 @@
         $('.emenu').on('click', function() {
             $('.modal-header h5').html('Edit Menu');
             $('.modal-footer button').html('Save Changes');
-            $('.modal-body form').attr('action', 'http://localhost/belajar1/sis-login/tools/editMenu');
+            $('.modal-body form').attr('action', '<?= base_url("tools/editMenu") ?>');
             $('.form-group #id').hide();
 
             const id = $(this).data('id');
             $.ajax({
-                url: 'http://localhost/belajar1/sis-login/Tools/getMenu',
+                url: '<?= base_url("tools/getMenu") ?>',
                 data: {
                     id: id
                 },
@@ -82,7 +82,7 @@
         });
 
         $('#addSubMenu').on('click', function() {
-            $('#menuId option').html('');
+            // $('#menuId').html('');
             $('#subTitle').val('');
             $('#subIcon').val('');
             $('#subUrl').val('');
@@ -94,12 +94,12 @@
             $('#id').hide();
             $('.modal-title').html('Edit Sub Menu');
             $('.modal-footer button').html('Save Changes');
-            $('.modal-body form').attr('action', 'http://localhost/belajar1/sis-login/tools/editSubMenu');
+            $('.modal-body form').attr('action', '<?= base_url("tools/editSubMenu") ?>');
 
             const id = $(this).data('id');
 
             $.ajax({
-                url: 'http://localhost/belajar1/sis-login/tools/getSubMenu',
+                url: '<?= base_url("tools/getSubMenu") ?>',
                 data: {
                     id: id
                 },
@@ -107,8 +107,9 @@
                 method: 'post',
                 success: function(data) {
                     $('#id').val(data['id']);
-                    $('#menuId option').val(data['menu_id']);
-                    $('#menuId option').html(data['menu']);
+                    let meid = data['menu_id'];
+                    $('option').removeAttr("selected");
+                    $('option[value$=' + meid + ']').attr("selected", "selected");
                     $('#subTitle').val(data['title']);
                     $('#subIcon').val(data['icon']);
                     $('#subUrl').val(data['url']);
