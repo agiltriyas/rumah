@@ -23,17 +23,16 @@ class Auth extends CI_Controller
                 # code...
                 redirect('user');
             }
+        }
+
+        if ($this->form_validation->run() == false) {
+
+            $data['title'] = "Form Login";
+            $this->load->view('template/auth_header', $data);
+            $this->load->view('auth/login');
+            $this->load->view('template/auth_footer');
         } else {
-
-            if ($this->form_validation->run() == false) {
-
-                $data['title'] = "Form Login";
-                $this->load->view('template/auth_header', $data);
-                $this->load->view('auth/login');
-                $this->load->view('template/auth_footer');
-            } else {
-                $this->_login();
-            }
+            $this->_login();
         }
     }
 
@@ -65,6 +64,16 @@ class Auth extends CI_Controller
 
     public function register()
     {
+        if ($this->session->has_userdata('email')) {
+            # code...
+            if ($this->session->userdata('role_id') == 1) {
+                # code...
+                redirect('admin');
+            } else {
+                # code...
+                redirect('user');
+            }
+        }
         $this->form_validation->set_rules('name', 'Name', 'required|trim');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', [
             'is_unique' => 'Email already registered'

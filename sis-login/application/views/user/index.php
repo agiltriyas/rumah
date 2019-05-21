@@ -6,7 +6,7 @@
 		<div class="col-md-6">
 			<div class="card">
 				<div class="card-header">
-					Profile
+					<h3>Profile</h3>
 				</div>
 				<div class="card-body">
 					<div class="card mb-3" style="max-width: 540px;">

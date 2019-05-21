@@ -52,6 +52,13 @@
 <script src="<?= base_url('asets') ?>/js/sb-admin-2.min.js"></script>
 
 <script>
+    $('#picture').on('change', function() {
+        //get the file name
+        var fileName = $(this).val().slice(12, 356);
+        console.log(fileName);
+        //replace the "Choose a file" label
+        $(this).next('.custom-file-label').html(fileName);
+    })
     $(document).ready(function() {
         $('#addMenu').on('click', function() {
             $('#menu').val('');

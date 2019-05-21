@@ -26,16 +26,51 @@ class User extends CI_Controller
 
     public function edit()
     {
+        $this->form_validation->set_rules('nama', 'Nama', 'required|trim|min_length[3]');
 
         $sesdata = $this->session->userdata('email');
         $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
-        $data['title'] = "My Profile";
-        $this->load->view('template/user_header', $data);
-        $this->load->view('template/user_sidebar');
-        $this->load->view('template/user_top');
-        $this->load->view('user/edit');
-        $this->load->view('template/user_footer');
-        # code...
+        if ($this->form_validation->run() == FALSE) {
+            $data['title'] = "Edit Profile";
+            $this->load->view('template/user_header', $data);
+            $this->load->view('template/user_sidebar');
+            $this->load->view('template/user_top');
+            $this->load->view('user/edit', $data);
+            $this->load->view('template/user_footer');
+            # code...
+        } else {
+            $file = $_FILES['picture'];
 
+            if ($file['name']) {
+                $config['upload_path'] = './asets/img/profile/';
+                $config['allowed_types'] = 'gif|jpg|png';
+                $config['max_size'] = '2048';
+                $this->load->library('upload', $config);
+
+                if ($this->upload->do_upload('picture')) {
+                    $newImage = $this->upload->data('file_name');
+                    $oldImage = $data['sesdata']['image'];
+                    $this->db->set('image', $newImage);
+
+                    if ($oldImage != "default.jpg") {
+                        unlink(FCPATH . 'asets/img/profile/' . $oldImage);
+                    }
+                } else {
+                    $error = $this->upload->display_errors('<div class="alert alert-danger role="alert">', '</div>');
+                    $this->session->set_flashdata('message', $error);
+                    redirect('user/edit');
+                };
+            }
+
+            $email = $this->input->post('email');
+            $nama = htmlspecialchars($this->input->post('nama', TRUE));
+
+            $this->db->set('nama', $nama);
+            $this->db->where('email', $email);
+            $this->db->update('user');
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Account has been updated.</div>');
+            redirect('user/edit');
+        }
     }
 }
