@@ -124,7 +124,7 @@ class Auth extends CI_Controller
 
             $this->_active($token, 'verify');
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
-            Your Account has been Created.</div>');
+            Your Account has been Created, link activation has sent to your email.</div>');
             redirect('auth');
         }
     }
@@ -148,6 +148,9 @@ class Auth extends CI_Controller
         if ($type == "verify") {
             $this->email->subject('Account Verification');
             $this->email->message('Click this link to verify your account <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . $token . '">Activate</a>');
+        } else {
+            $this->email->subject('Forgot Password');
+            $this->email->message('Click this link to reset your password <a href="' . base_url() . 'auth/verifypass?email=' . $this->input->post('email') . '&token=' . $token . '">Change It</a>');
         }
 
         if ($this->email->send()) {
@@ -167,6 +170,8 @@ class Auth extends CI_Controller
             'token' => $token
         ])->row_array();
         if ($result) {
+            //bisa tambahkan sendiri expired token disini
+
             $this->db->set('is_active', 1);
             $this->db->where('email', $email);
             $this->db->update('user');
@@ -178,6 +183,27 @@ class Auth extends CI_Controller
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
             Activation problems!.</div>');
             redirect('auth');
+        }
+    }
+
+    public function verifypass()
+    {
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+        $data['verify'] = $email;
+        $result = $this->db->get_where('user_token', [
+            'email' => $email,
+            'token' => $token
+        ])->row_array();
+        if ($result) {
+            $data['title'] = "Reset Password";
+            $this->load->view('template/auth_header', $data);
+            $this->load->view('auth/changepass', $data);
+            $this->load->view('template/auth_footer');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+            Forgot password problems!.</div>');
+            redirect('auth/forgotPass');
         }
     }
 
@@ -194,5 +220,62 @@ class Auth extends CI_Controller
     {
         $data['title'] = "Forbidden";
         $this->load->view('auth/blocked', $data);
+    }
+
+    public function forgotPass()
+    {
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        if ($this->form_validation->run() == FALSE) {
+            $data['title'] = "Reset Password";
+            $this->load->view('template/auth_header', $data);
+            $this->load->view('auth/forgotpass');
+            $this->load->view('template/auth_footer');
+        } else {
+            $email = htmlspecialchars($this->input->post('email', TRUE));
+            $result = $this->db->get_where('user', ['email' => $email])->row_array();
+
+            if ($result) {
+                if ($email['is_active'] == 0) {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Your account yet activated.</div>');
+                    redirect('auth/forgotPass');
+                } else {
+                    $token = base64_encode(random_bytes(32));
+                    $data_token = [
+                        'email' => $email,
+                        'token' => $token,
+                        'date_created' => time()
+                    ];
+                    $this->db->insert('user_token', $data_token);
+                    $this->_active($token, 'forgot');
+
+                    $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Reset password link has bent sent to your email.</div>');
+                    redirect('auth');
+                }
+            } else {
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Your email is not registered as Account</div>');
+                redirect('auth/forgotPass');
+            }
+        }
+    }
+    public function chpass()
+    {
+        $this->form_validation->set_rules('nPass', 'New Password', 'required|trim|min_length[3]');
+        $this->form_validation->set_rules('nPass2', 'Confirm Password', 'required|trim|min_length[3]|matches[nPass]');
+        $email = $this->input->post('email');
+        if ($this->form_validation->run() == FALSE) {
+            $data['title'] = "Reset Password";
+            $this->load->view('template/auth_header', $data);
+            $this->load->view('auth/changepass');
+            $this->load->view('template/auth_footer');
+        } else {
+            $nPass = $this->input->post('nPass2');
+            $nPass_hash = password_hash($nPass, PASSWORD_DEFAULT);
+            $this->db->set('password', $nPass_hash);
+            $this->db->where('email', $email);
+            $this->db->update('user');
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Password has Updated</div>');
+            $this->db->delete('user_token', ['email' => $email]);
+            redirect('auth');
+        }
     }
 }

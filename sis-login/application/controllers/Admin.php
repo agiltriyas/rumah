@@ -29,7 +29,7 @@ class Admin extends CI_Controller
     {
         $sesdata = $this->session->userdata('email');
         $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
-        $data['title'] = "Role Access";
+        $data['title'] = "Access Menu";
         $this->load->view('template/user_header', $data);
         $this->load->view('template/user_sidebar', $data);
         $this->load->view('template/user_top');
