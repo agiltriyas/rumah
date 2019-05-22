@@ -46,18 +46,25 @@ class Auth extends CI_Controller
         //cek email dan password
         if ($email == $result['email'] && password_verify($pass, $result['password'])) {
             # code...
-            $data = [
-                "email" => $result['email'],
-                'role_id' => $result['role_id']
-            ];
-            $this->session->set_userdata($data);
-            if ($result['role_id'] == 1) {
-                redirect('admin');
+            // cek email active
+            if ($result['is_active'] == 0) {
+                # code...
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account has not been active, activation sent to your email.</div>');
+                redirect('auth');
             } else {
-                redirect('user');
+                $data = [
+                    "email" => $result['email'],
+                    'role_id' => $result['role_id']
+                ];
+                $this->session->set_userdata($data);
+                if ($result['role_id'] == 1) {
+                    redirect('admin');
+                } else {
+                    redirect('user');
+                }
             }
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Email or Password Invalid.</div>');
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Email or Password Invalid.</div>');
             redirect('auth');
         }
     }
@@ -74,6 +81,7 @@ class Auth extends CI_Controller
                 redirect('user');
             }
         }
+
         $this->form_validation->set_rules('name', 'Name', 'required|trim');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', [
             'is_unique' => 'Email already registered'
@@ -89,23 +97,86 @@ class Auth extends CI_Controller
             $this->load->view('auth/register');
             $this->load->view('template/auth_footer');
         } else {
-
+            $email = $this->input->post('email', true);
             $data = [
                 'nama' => htmlspecialchars($this->input->post('name', true)),
-                'email' => htmlspecialchars($this->input->post('email', true)),
+                'email' => htmlspecialchars($email),
                 'image' => 'default.jpg',
                 'password' => password_hash(
                     $this->input->post('password2'),
                     PASSWORD_DEFAULT
                 ),
                 'role_id' => 2,
-                'is_active' => 1,
+                'is_active' => 0,
+                'date_created' => time()
+            ];
+
+            $token = base64_encode(random_bytes(32));
+
+            $data_token = [
+                'email' => $email,
+                'token' => $token,
                 'date_created' => time()
             ];
 
             $this->db->insert('user', $data);
+            $this->db->insert('user_token', $data_token);
+
+            $this->_active($token, 'verify');
             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
             Your Account has been Created.</div>');
+            redirect('auth');
+        }
+    }
+
+    private function _active($token, $type)
+    {
+        $config = [
+            'protocol' =>  'smtp',
+            'smtp_host' => 'ssl://smtp.googlemail.com',
+            'smtp_port' => 465,
+            'smtp_user' => 'agilsarana2@gmail.com',
+            'smtp_pass' => 'saiyan123',
+            'mailtype' => 'html',
+            'charset' => 'utf-8',
+            'newline' => "\r\n"
+        ];
+        $this->load->library('email', $config);
+        $this->email->initialize($config);
+        $this->email->from('Agilsarana2@gmail.com');
+        $this->email->to($this->input->post('email'));
+        if ($type == "verify") {
+            $this->email->subject('Account Verification');
+            $this->email->message('Click this link to verify your account <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . $token . '">Activate</a>');
+        }
+
+        if ($this->email->send()) {
+            return TRUE;
+        } else {
+            echo $this->email->print_debugger();
+            die;
+        }
+    }
+
+    public function verify()
+    {
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+        $result = $this->db->get_where('user_token', [
+            'email' => $email,
+            'token' => $token
+        ])->row_array();
+        if ($result) {
+            $this->db->set('is_active', 1);
+            $this->db->where('email', $email);
+            $this->db->update('user');
+            $this->db->delete('user_token', ['email' => $email]);
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+            Account has been activated.</div>');
+            redirect('auth');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+            Activation problems!.</div>');
             redirect('auth');
         }
     }
