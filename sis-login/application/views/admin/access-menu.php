@@ -24,7 +24,7 @@
                             <th scope="row"><?= $i ?></th>
                             <td><?= $m['menu']; ?></td>
                             <td>
-                                <div class="form-check">
+                                <div class="custom-control custom-switch">
                                     <?php
                                     $result2 = $this->db->get_where('user_access_menu', [
                                         'role_id' => $role['id'],
@@ -32,9 +32,11 @@
                                     ]);
                                     ?>
                                     <?php if ($result2->num_rows() == 1) : ?>
-                                        <input class="form-check-input cekAccess" type="checkbox" id="cekAccess" checked="checked" data-role="<?= $role['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                        <input class="custom-control-input cekAccess" type="checkbox" id="cekAccess<?= $m['id'] ?>" checked="checked" data-role="<?= $role['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                        <label class="custom-control-label" for="cekAccess<?= $m['id'] ?>"></label>
                                     <?php else : ?>
-                                        <input class="form-check-input cekAccess" type="checkbox" id="cekAccess" data-role="<?= $role['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                        <input class="custom-control-input cekAccess" type="checkbox" id="cekAccess<?= $m['id'] ?>" data-role="<?= $role['id']; ?>" data-menu="<?= $m['id']; ?>">
+                                        <label class="custom-control-label" for="cekAccess<?= $m['id'] ?>"></label>
                                     <?php endif; ?>
                                 </div>
                             </td>
