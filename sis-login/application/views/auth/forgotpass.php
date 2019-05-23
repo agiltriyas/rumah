@@ -27,7 +27,7 @@
                                 </form>
                                 <hr>
                                 <div class="text-center">
-                                    <a class="small" href="<?= base_url(); ?>auth">Login</a>
+                                    <a class="small" href="<?= base_url(); ?>auth">Back To Login</a>
                                 </div>
                             </div>
                         </div>

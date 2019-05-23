@@ -14,7 +14,7 @@ class Admin extends CI_Controller
     public function index()
     {
         $sesdata = $this->session->userdata('email');
-        $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
+        $data['sesdata'] = $this->db->get_where('user', ['role_id' => 2])->num_rows();
         $data['title'] = "Dashboard";
         $this->load->view('template/user_header', $data);
         $this->load->view('template/user_sidebar', $data);
@@ -29,7 +29,7 @@ class Admin extends CI_Controller
     {
         $sesdata = $this->session->userdata('email');
         $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
-        $data['title'] = "Access Menu";
+        $data['title'] = "Role Access";
         $this->load->view('template/user_header', $data);
         $this->load->view('template/user_sidebar', $data);
         $this->load->view('template/user_top');
@@ -43,7 +43,7 @@ class Admin extends CI_Controller
 
         $sesdata = $this->session->userdata('email');
         $data['sesdata'] = $this->db->get_where('user', ['email' => $sesdata])->row_array();
-        $data['title'] = "Access Menu";
+        $data['title'] = "Role Access";
         $this->load->view('template/user_header', $data);
         $this->load->view('template/user_sidebar', $data);
         $this->load->view('template/user_top');

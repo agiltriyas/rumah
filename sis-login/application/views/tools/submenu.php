@@ -12,8 +12,8 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Menu Id</th>
                         <th scope="col">Title</th>
+                        <th scope="col">Menu</th>
                         <th scope="col">Icon</th>
                         <th scope="col">Url</th>
                         <th scope="col">Action</th>
@@ -35,8 +35,8 @@
                         <tr>
                             <th scope="row"><?= $i ?></th>
 
-                            <td><?= $m['menu']; ?></td>
                             <td><?= $m['title']; ?></td>
+                            <td><?= $m['menu']; ?></td>
                             <td><i class="<?= $m['icon']; ?>"></i></td>
                             <td><?= $m['url']; ?></td>
                             <td>
